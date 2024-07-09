@@ -1,36 +1,45 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import confetti from "canvas-confetti";
-import {Square} from "./components/Square";
-import {TURNS } from "./constants";
+import { Square } from "./components/Square";
+import { TURNS } from "./constants";
 
-import { checkWinnerFrom,checkEndGame } from "./logic/board.js";
+import { checkWinnerFrom, checkEndGame } from "./logic/board.js";
 
 import { WinnerModal } from "./components/WinnerModal";
 import { Board } from "./components/Board.jsx";
-
-
-
-
-
-
+import {
+  saveGameToStorage,
+  resetGameFromStorage,
+} from "./logic/storage/index.js";
 
 function App() {
-  const [board, setBoard] = useState(Array(9).fill(null));
+  const [board, setBoard] = useState(() => {
+    const boardFromLocalStorage = window.localStorage.getItem("board");
 
-  const [turn, setTurn] = useState(TURNS.X);
+    //if there is a board in the local storage, parse it, otherwise,
+    //create a new array.
+    return boardFromLocalStorage
+      ? JSON.parse(boardFromLocalStorage)
+      : Array(9).fill(null);
+  });
+
+  const [turn, setTurn] = useState(() => {
+    const turnFromStorage = window.localStorage.getItem("turn");
+
+    return turnFromStorage ?? TURNS.X;
+  });
 
   //if the state is null, there is no winner, otherwise, the state is the winner.
   const [winner, setWinner] = useState(null);
-
-
 
   const resetGame = () => {
     setBoard(Array(9).fill(null));
     setTurn(TURNS.X);
     setWinner(null);
-  };
 
- 
+    //remove the game from the local storage
+    resetGameFromStorage();
+  };
 
   const updateBoard = (index) => {
     //dont update if the square is already filled
@@ -50,25 +59,38 @@ function App() {
 
     const newTurn = turn === TURNS.X ? TURNS.O : TURNS.X;
     setTurn(newTurn);
+
+    //save game with local storage
+    //JSON.stringify from here so the component is not responsible for.
+    saveGameToStorage(JSON.stringify(newBoard), newTurn);
+
     const newWinner = checkWinnerFrom(newBoard);
     if (newWinner) {
-      confetti()
+      confetti();
+
       //the state updates is async, and that is really
       //important to understand in react.
-
       setWinner(newWinner);
-
-      
-    }else if(checkEndGame(newBoard)){
+    } else if (checkEndGame(newBoard)) {
       setWinner(false); //if there is no winner, it's a draw.
     }
   };
+
+  //each time a component is rendered, the useEffect is called.
+  useEffect(() => {
+    console.log("use effect");
+    //if the winner value changes, the useEffect is called.
+    // that's how it works.
+
+    //this could be very powerful, for example, to make a request to an API
+    //if a value changes. or save to a database.
+  }, [turn, board]);
 
   return (
     <main className="board">
       <h1>Tic tac toe</h1>
       <button onClick={resetGame}>Reset</button>
-      
+
       <Board board={board} updateBoard={updateBoard} />
 
       <section className="turn">
@@ -76,7 +98,7 @@ function App() {
         <Square isSelected={turn === TURNS.O}>{TURNS.O}</Square>
       </section>
 
-     <WinnerModal resetGame={resetGame} winner={winner}/>
+      <WinnerModal resetGame={resetGame} winner={winner} />
     </main>
   );
 }

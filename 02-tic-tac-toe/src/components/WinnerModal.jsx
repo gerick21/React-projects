@@ -1,6 +1,6 @@
-import {Square} from "./Square.jsx";
+import { Square } from "./Square.jsx";
 
-export function WinnerModal({winner, resetGame}) {
+export function WinnerModal({ winner, resetGame }) {
   if (winner === null) return null;
 
   const winnerText = winner === false ? "It's a draw" : `The winner is `;
@@ -17,5 +17,3 @@ export function WinnerModal({winner, resetGame}) {
     </section>
   );
 }
-
-

@@ -10,7 +10,8 @@ export const checkWinnerFrom = (boardToCheck) => {
       boardToCheck[a] === boardToCheck[b] &&
       boardToCheck[a] === boardToCheck[c]
     ) {
-      return boardToCheck[a]; //this will return the winner, x or o.
+      //this will return the winner, x or o.
+      return boardToCheck[a]; 
     }
   }
   //if there is no winner, return null.
@@ -21,5 +22,3 @@ export const checkEndGame = (newBoard) => {
   //if all the squares are filled, that means the game is over.
   return newBoard.every((square) => square);
 };
-
-
