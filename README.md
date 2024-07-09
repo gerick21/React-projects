@@ -14,8 +14,7 @@ This repository hosts multiple React projects, each designed to tackle different
    - [Tic Tac Toe Game](#tic-tac-toe-game)
 4. [Getting Started](#getting-started)
 5. [Contributing](#contributing)
-6. [License](#license)
-7. [Contact](#contact)
+6. [Contact](#contact)
 
 ## Introduction
 
@@ -71,9 +70,7 @@ Contributions are welcome! To contribute to this repository, please follow these
 4. Push your changes to your forked repository.
 5. Open a pull request with a detailed description of your changes.
 
-## License
 
-This repository is licensed under the MIT License. See the [LICENSE](LICENSE) file for more details.
 
 ## Contact
 
@@ -81,4 +78,4 @@ For any questions or suggestions, feel free to contact me at gerickcamacho@gmail
 
 ---
 
-This format provides a clear structure for your README, making it easy for others to understand and navigate your repository.
+
