@@ -1,47 +1,34 @@
-import { useState, useEffect } from "react";
 import "./App.css";
-
-const CAT_ENDPOINT_RANDOM_FACT = "https://catfact.ninja/fact";
-
-//const CAT_ENDPOINT_IMAGE_URL = `https://cataas.com/cat/says/${firstWord}
-//?size=50&color=red&json=true`;
-
-const CAT_PREFIX_IMAGE_URL = "https://cataas.com";
+import { useCatImage } from "./hooks/useCatImage.js";
+import { useCatFact } from "./hooks/useCatFact.js";
 
 export function App() {
-  const [fact, setFact] = useState();
-  const [imageUrl, setImageUrl] = useState();
+  const { fact, refreshFact } = useCatFact();
+  const { imageUrl } = useCatImage({ fact });
 
-  useEffect(() => {
-    fetch(CAT_ENDPOINT_RANDOM_FACT)
-      .then((res) => res.json())
-      .then((data) => {
-        const { fact } = data;
-        setFact(fact);
-      });
-  }, []);
-
-  useEffect(() => {
-    if (!fact) return;
-
-    const threeWords = fact.split("", 3).join("");
-    console.log("threeWords", threeWords);
-
-    fetch(
-      `https://cataas.com/cat/says/${threeWords}?size=50&color=red&json=true`
-    )
-      .then((res) => res.json())
-      .then((response) => {
-        const { url } = response;
-        setImageUrl(url);
-      });
-  });
+  const handleClick = async () => {
+    refreshFact();
+  };
 
   return (
-    <main>
-      <h1>Random Cat Facts</h1>
-      {fact && <p>{fact}</p>}
-      {imageUrl && <img src={imageUrl} alt="Random cat" />}
+    <main className="app-container">
+      <h1 className="app-title">Cats Random Facts</h1>
+
+      <button className="refresh-button" onClick={handleClick}>
+        Get new fact
+      </button>
+
+      {fact && <p className="fact-text">{fact}</p>}
+      {imageUrl && (
+        <img
+          className="cat-image"
+          src={imageUrl}
+          alt={`Image extracted using the first three words for ${fact}`}
+        />
+      )}
+      <footer className="app-footer">
+        Developed by Gerick Vargas Camacho 2024
+      </footer>
     </main>
   );
 }
