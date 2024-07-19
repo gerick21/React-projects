@@ -1,20 +1,35 @@
 import "./App.css";
-
-import { Movies } from "./components/Movies";
-import { useMovies } from "./hooks/useMovies";
+import { useState, useCallback } from "react";
+import { useMovies } from "./hooks/useMovies.js";
+import { Movies } from "./components/Movies.jsx";
 import { useSearch } from "./hooks/useSearch";
+import { debounce } from "just-debounce-it";
 
 function App() {
-  const { movies } = useMovies();
+  const [sort, setSort] = useState(false);
   const { search, updateSearch, error } = useSearch();
+  const { movies, getMovies, loading } = useMovies({ search, sort });
+
+  const debouncedGetMovies = useCallback(
+    debounce((search) => {
+      getMovies({ search });
+    }, 300),
+    []
+  );
 
   const handleSubmit = (event) => {
     event.preventDefault();
-    console.log(search);
+    getMovies({ search });
+  };
+
+  const handleSort = () => {
+    setSort(!sort);
   };
 
   const handleChange = (event) => {
-    updateSearch(event.target.value);
+    const newSearch = event.target.value;
+    updateSearch(newSearch);
+    debouncedGetMovies(newSearch);
   };
 
   return (
@@ -29,14 +44,13 @@ function App() {
             name="query"
             placeholder="Avengers, Star Wars, Harry Potter..."
           />
+          <input type="checkbox" onChange={handleSort} />
           <button type="submit">Search</button>
         </form>
         {error && <p className="error">{error}</p>}
       </header>
 
-      <main>
-        <Movies movies={movies} />
-      </main>
+      <main>{loading ? <p>Loading...</p> : <Movies movies={movies} />}</main>
     </div>
   );
 }

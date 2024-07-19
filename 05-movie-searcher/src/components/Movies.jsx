@@ -2,9 +2,9 @@ function ListOfMovies({ movies }) {
   return (
     <ul className="movies">
       {movies.map((movie) => (
-        <li key={movie.id}>
+        <li className="movie" key={movie.id}>
           <img src={movie.poster} alt={movie.Title} />
-          <h2>{movie.title}</h2>
+          <h3>{movie.title}</h3>
           <p>{movie.year}</p>
         </li>
       ))}
