@@ -5,14 +5,38 @@ export const CartContext = createContext();
 export function CartProvider({ children }) {
   const [cart, setCart] = useState([]);
 
-  const addToCart = (product) => {};
+  const addToCart = (product) => {
+    //check if product is already in cart
+    const productInCartIndex = cart.findIndex((item) => item.id === product.id);
+
+    if (productInCartIndex >= 0) {
+      const newCart = structuredClone(cart);
+      newCart[productInCartIndex].quantity++;
+      setCart(newCart);
+    }
+
+    //product is not in cart
+    setCart((prevState) => [
+      ...prevState,
+      {
+        ...product,
+        quantity: 1,
+      },
+    ]);
+  };
+
+  const removeFromCart = (product) => {
+    setCart((prevState) => prevState.filter((item) => item.id !== product.id));
+  };
 
   const clearCart = () => {
     setCart([]);
   };
 
   return (
-    <CartContext.Provider value={{ cart, addToCart, clearCart }}>
+    <CartContext.Provider
+      value={{ cart, addToCart, removeFromCart, clearCart }}
+    >
       {children}
     </CartContext.Provider>
   );
