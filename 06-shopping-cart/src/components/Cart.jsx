@@ -1,9 +1,26 @@
 import { useId } from "react";
 import { CartIcon, ClearCartIcon } from "./icons.jsx";
 import "./Cart.css";
+import { useCart } from "../hooks/useCart.js";
+
+function CartItem({ thumbnail, price, title, quantity, addToCart }) {
+  return (
+    <li>
+      <img src={thumbnail} alt={title} />
+      <div>
+        <strong>{title}</strong> -${price}
+      </div>
+      <footer>
+        <small onClick={addToCart}>Qty: {quantity}</small>
+        <button>+</button>
+      </footer>
+    </li>
+  );
+}
 
 export function Cart() {
   const cardCheckboxId = useId();
+  const { cart, clearCart, addToCart } = useCart();
 
   return (
     <>
@@ -15,19 +32,16 @@ export function Cart() {
 
       <aside className="cart">
         <ul>
-          <li>
-            <img src="https://via.placeholder.com/150" alt="Iphone" />
-            <div>
-              <strong>Iphone</strong>
-            </div>
-            <footer>
-              <small>Qty:1</small>
-              <button>+</button>
-            </footer>
-          </li>
+          {cart.map((product) => (
+            <CartItem
+              key={product.id}
+              addToCart={() => addToCart(product)}
+              {...product}
+            />
+          ))}
         </ul>
 
-        <button>
+        <button onClick={clearCart}>
           <ClearCartIcon />
         </button>
       </aside>
